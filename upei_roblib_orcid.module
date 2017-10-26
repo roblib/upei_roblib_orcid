@@ -27,7 +27,6 @@ function upei_roblib_orcid_menu() {
     'page callback' => 'upei_roblib_orcid_response',
     'page arguments' => array(3),
     'access callback' => 'upei_roblib_orcid_response_access',
-    'access arguments' => array(3),
     'type' => MENU_LOCAL_TASK,
     'file' => 'includes/upei_roblib_orcid.response.inc',
   );
@@ -35,9 +34,15 @@ function upei_roblib_orcid_menu() {
   return $items;
 }
 
-function upei_roblib_orcid_response_access($arg) {
-  //TODO check permissions
-  return TRUE;
+/**
+ * Implements hook_access
+ *
+ * @return bool
+ */
+function upei_roblib_orcid_response_access() {
+  $pid = upei_roblib_orcid_get_user_entity();
+  $user_object = islandora_object_load($pid);
+ return islandora_user_access($user_object, array(ISLANDORA_METADATA_EDIT));
 }
 
 
