@@ -1,0 +1,8 @@
+name = UPEI Roblib Orcid Integration
+description = Integration for and Orcid
+package = Roblib
+dependencies[] = islandora_solr
+dependencies[] = islandora_entities
+stylesheets[all][] = css/upei_roblib_orcid.base.css
+version = 7.x-dev
+core = 7.x

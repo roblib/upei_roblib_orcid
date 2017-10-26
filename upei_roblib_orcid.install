@@ -1,0 +1,21 @@
+<?php
+/**
+ * @file
+ * upei_roblib_orcid.install
+ */
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function islandora_newspaper_uninstall() {
+  $variables = array(
+    'upei_roblib_orcid_oauth_token_endpoint',
+    'upei_roblib_orcid_oauth_auth_endpoint',
+    'upei_roblib_orcid_oauth_client_id',
+    'upei_roblib_orcid_oauth_client_secret',
+    'upei_roblib_orcid_mads_user_field',
+    'upei_roblib_orcid_start_message',
+  );
+  array_walk($variables, 'variable_del');
+}
