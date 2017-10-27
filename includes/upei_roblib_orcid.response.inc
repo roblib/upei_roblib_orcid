@@ -2,7 +2,6 @@
 /**
  * @file
  * API calls to orcid and islandora.
- *
  */
 
 
@@ -11,7 +10,6 @@
  *
  * After a user signs in to ORCID and authorizes (or not) our app they get
  * redirected here.
- *
  */
 function upei_roblib_orcid_response() {
   $params = drupal_get_query_parameters();
@@ -22,7 +20,7 @@ function upei_roblib_orcid_response() {
   $error = isset($params['error']) ? $params['error'] : '';
   if (!empty($code)) {
     $response = upei_roblib_orcid_get_orcid_id($code);
-    if(empty($response)) {
+    if (empty($response)) {
       upei_roblib_orcid_handle_orcid_error('Error communicating with ORCID', 'no response when retrieving id');
     }
     if ($response->code === '200') {
@@ -43,7 +41,9 @@ function upei_roblib_orcid_response() {
  * Redirects to the users home page and prints the error to the screen.
  *
  * @param string $error
+ *   The error that occurred.
  * @param string $error_description
+ *   A description of the error.
  */
 function upei_roblib_orcid_handle_orcid_error($error, $error_description) {
   global $user;
@@ -58,7 +58,7 @@ function upei_roblib_orcid_handle_orcid_error($error, $error_description) {
 }
 
 /**
- * After a successful token request attempt to add the ORCID iD to the MADS datastream.
+ * After a successful token request add the ORCID iD to the MADS datastream.
  *
  * @param object $response
  *   A PHP object containing the data (body) of the response.
@@ -69,7 +69,8 @@ function upei_roblib_orcid_successful_token_request($response) {
   $pid = upei_roblib_orcid_get_user_entity();
   try {
     upei_roblib_orcid_add_id_mads($data['orcid'], $pid);
-  } catch (Exception $e) {
+  }
+  catch (Exception $e) {
     watchdog('UPEI Roblib Orcid',
       'There was an Error linking your Person Entity Profile with an ORCID ID. %msg, 
     for user %username and %pid',
@@ -78,7 +79,6 @@ function upei_roblib_orcid_successful_token_request($response) {
         '%username' => $user->name,
         '%pid' => $pid,
       ), WATCHDOG_ERROR);
-    //TODO make a renderable array for return
     drupal_set_message(t('Sorry, the connection was not successful. There was an Error linking your profile with an ORCID ID. @msg, 
     for user @username and @pid.  Try again?',
       array(
@@ -94,10 +94,10 @@ function upei_roblib_orcid_successful_token_request($response) {
 }
 
 /**
- * After a failed token request redirect to the users home and print the error to the screen.
+ * After a failed token request redirect to the users home and print the error.
  *
- * @param $response
- *    A PHP object containing the data (body) of the response.
+ * @param object $response
+ *   A PHP object containing the data (body) of the response.
  */
 function upei_roblib_orcid_failed_token_request($response) {
   global $user;
@@ -146,7 +146,7 @@ function upei_roblib_orcid_get_orcid_id($code) {
  *   The PID of the islandora object to update.
  *
  * @throws \Exception
- *   IF the Object does not exist, the MADS cannot be found or an ORCID iD already exists
+ *   IF the Object does not exist, the MADS can't be found or an ORCID iD exists
  */
 function upei_roblib_orcid_add_id_mads($orcid_id, $pid) {
   if (empty($pid)) {
@@ -158,7 +158,7 @@ function upei_roblib_orcid_add_id_mads($orcid_id, $pid) {
   }
   $mads = $profile_object['MADS']->content;
   if (empty($mads)) {
-    throw new Exception ('MADS datastream not found');
+    throw new Exception('MADS datastream not found');
   }
   $updated_xml = upei_roblib_orcid_update_mads($mads, $orcid_id);
 
@@ -167,6 +167,7 @@ function upei_roblib_orcid_add_id_mads($orcid_id, $pid) {
 
 /**
  * Adds an ORCID iD to the MADS xml.
+ *
  * @param string $mads_xml
  *   The MADS xml.
  * @param string $orcid_id
@@ -189,9 +190,8 @@ function upei_roblib_orcid_update_mads($mads_xml, $orcid_id) {
   $results = $xpath->query($query, $xml);
   $found = (bool) $results->length;
   if (!empty($found)) {
-    throw new Exception ('ORCID ID Exists');
+    throw new Exception('ORCID ID Exists');
   }
-  // We need to add the new identifier
   $root = $xml->documentElement;
   $identifier = $xml->createElementNS("http://www.loc.gov/mads/v2",
     "mads:identifier", $orcid_id);

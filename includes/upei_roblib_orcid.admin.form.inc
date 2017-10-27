@@ -38,7 +38,7 @@ function upei_roblib_orcid_admin_form($form, &$form_state) {
     '#type' => 'textfield',
     '#required' => TRUE,
     '#default_value' => variable_get('upei_roblib_orcid_oauth_client_id', ''),
-    '#description' => t('This sites\'s ID for authenticating to the token server.'),
+    '#description' => t("This sites's ID for authenticating to the token server."),
   );
 
   $form['upei_roblib_orcid_oauth_client_secret'] = array(
@@ -46,7 +46,7 @@ function upei_roblib_orcid_admin_form($form, &$form_state) {
     '#type' => 'textfield',
     '#required' => TRUE,
     '#default_value' => variable_get('upei_roblib_orcid_oauth_client_secret', ''),
-    '#description' => t('This site\'s secret used for authenticating to the token server.'),
+    '#description' => t("This site's secret used for authenticating to the token server."),
   );
 
   $form['upei_roblib_orcid_mads_user_field'] = array(

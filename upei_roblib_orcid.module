@@ -35,17 +35,18 @@ function upei_roblib_orcid_menu() {
 }
 
 /**
- * Implements hook_access
- *
- * @return bool
+ * Implements hook_access().
  */
 function upei_roblib_orcid_response_access() {
   $pid = upei_roblib_orcid_get_user_entity();
   $user_object = islandora_object_load($pid);
- return islandora_user_access($user_object, array(ISLANDORA_METADATA_EDIT));
+  return islandora_user_access($user_object, array(ISLANDORA_METADATA_EDIT));
 }
 
 
+/**
+ * Implements hook_form().
+ */
 function upei_roblib_orcid_create_or_connect_form($form, &$form_state, $object_id = NULL) {
   $form['#prefix'] = '<div id="upei-roblib-orcid-form">';
   $form['#suffix'] = '</div>';
@@ -89,14 +90,14 @@ function upei_roblib_orcid_create_or_connect_form($form, &$form_state, $object_i
  *   Returns TRUE if we can add an ORCID iD to this object, FALSE otherwise.
  */
 function upei_roblib_orcid_needs_orcid_id($mads_xml) {
-  if(empty($mads_xml)) {
+  if (empty($mads_xml)) {
     // MADS does not exist we won't be able to add an orcid iD.
     return FALSE;
   }
   $xml = new DOMDocument();
   $test = $xml->loadXML($mads_xml);
   if (empty($test)) {
-    //problem parsing mads we won't be able to add an id
+    // Problem parsing mads we won't be able to add an id.
     return FALSE;
   }
   $query = "//mads:identifier[@type='orcid']";
@@ -107,7 +108,15 @@ function upei_roblib_orcid_needs_orcid_id($mads_xml) {
   return !$found;
 }
 
-function upei_roblib_orcid_create_or_connect_form_submit() {
+/**
+ * Send the user to ORCID to start the process of getting an ORCID iD.
+ *
+ * @param array $form
+ *   The Drupal form.
+ * @param array $form_state
+ *   The Drupal form state.
+ */
+function upei_roblib_orcid_create_or_connect_form_submit($form, &$form_state) {
   $path = variable_get('upei_roblib_orcid_oauth_auth_endpoint');
   $client_id = variable_get('upei_roblib_orcid_oauth_client_id');
   $redirect_url = url(NULL, array('absolute' => TRUE)) . UPEI_ROBLIB_ORCID_CALLBACK_URI . '/';
@@ -141,7 +150,7 @@ function upei_roblib_orcid_block_view($delta = '') {
   $block = array();
   switch ($delta) {
     case UPEI_ROBLIB_ORCID_BLOCK:
-      // Create your block content here
+      // Create your block content here.
       $block['subject'] = t('Islandora Orcid Integration');
       $user_pid = upei_roblib_orcid_get_user_entity();
       $form = drupal_get_form('upei_roblib_orcid_create_or_connect_form', $user_pid);
@@ -153,17 +162,15 @@ function upei_roblib_orcid_block_view($delta = '') {
 
 
 /**
- * Searches for an Islandora Person Entity object that matches the current
- * Drupal username.
+ * Searches for an Islandora Person Entity object matching the Drupal username.
  *
  * @return string
- *    The PID of the matching user if they exist, otherwise NULL.
+ *   The PID of the matching user if they exist, otherwise NULL.
  */
 function upei_roblib_orcid_get_user_entity() {
   $qualifier = variable_get('upei_roblib_orcid_mads_user_field', 'MADS_u1_ms');
   global $user;
   module_load_include('inc', 'islandora_solr', 'includes/utilities');
-  // Currently scholar stores the users username in the u1 field not the id
   $user_name = islandora_solr_lesser_escape($user->name);
   $params = array(
     'fl' => array('PID'),
@@ -173,7 +180,8 @@ function upei_roblib_orcid_get_user_entity() {
   $qp->buildAndExecuteQuery($query, $params);
   try {
     $results = $qp->islandoraSolrResult['response']['objects'];
-  } catch (Exception $e) {
+  }
+  catch (Exception $e) {
     watchdog_exception('UPEI Roblib Orcid', $e, 'Got an exception while searching for user.', array(), WATCHDOG_ERROR);
   }
   $pid = NULL;
