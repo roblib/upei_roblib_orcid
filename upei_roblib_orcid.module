@@ -38,9 +38,23 @@ function upei_roblib_orcid_menu() {
  * Implements hook_access().
  */
 function upei_roblib_orcid_response_access() {
+  return TRUE;
+  /*
+  Currently UPEI does not want scholars to be able to edit their Scholar
+  profile, but does want them to be able to add an ORCID iD to their MADS.
+  So for now let them use this module to add their ORCID iD without a permission check.
+  Nothing is passed in the URL and we match the currently logged in drupal
+  user id with a value in a solr field to get the Islandora object to edit.
+  So worse case scenario would be updating the wrong MADS with an ORCID iD
+  if Solr had the wrong username in a MADs Record, or getting an error due to
+  being blocked by XACML. Uncomment below to enable a permission check.
+  */
+
+  /*
   $pid = upei_roblib_orcid_get_user_entity();
   $user_object = islandora_object_load($pid);
   return islandora_user_access($user_object, array(ISLANDORA_METADATA_EDIT));
+  */
 }
 
 
