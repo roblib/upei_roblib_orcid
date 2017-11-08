@@ -106,8 +106,7 @@ function upei_roblib_orcid_update_mads($mads_xml, $orcid_id) {
     throw new Exception('ORCID ID Exists');
   }
   $root = $xml->documentElement;
-  $identifier = $xml->createElementNS("http://www.loc.gov/mads/v2",
-    "mads:identifier", $orcid_id);
+  $identifier = $xml->createElement("identifier", $orcid_id);
   $attr = $xml->createAttribute('type');
   $attr->value = 'orcid';
   $identifier->appendChild($attr);
