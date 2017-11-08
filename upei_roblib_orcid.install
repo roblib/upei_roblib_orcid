@@ -16,6 +16,7 @@ function islandora_newspaper_uninstall() {
     'upei_roblib_orcid_oauth_client_secret',
     'upei_roblib_orcid_mads_user_field',
     'upei_roblib_orcid_start_message',
+    'upei_roblib_orcid_logut_url',
   );
   array_walk($variables, 'variable_del');
 }

@@ -15,7 +15,7 @@ Drupal.behaviors.upei_roblib_orcid = {
       var orcid_logout_url = Drupal.settings.upei_roblib_orcid.orcid_logout_url;
       jQuery.getJSON(orcid_logout_url, function(data) {
         jQuery.each(data, function(key, val) {
-          alert(key + " -- " + val);
+          console.log(key + " -- " + val);
         })
           console.log("Attempted to log out of ORCID. Still Logged In: " + data.loggedIn);
       });
