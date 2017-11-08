@@ -72,8 +72,7 @@ function upei_roblib_orcid_add_orcid_ds($data, $object) {
  */
 function upei_roblib_orcid_update_xacml($object) {
   global $user;
-  $existing_xacml = isset($object['XACML']->content) ? $object['XACML'] : NULL;
-  $xacml = new IslandoraXacml($object, $existing_xacml);
+  $xacml = new IslandoraXacml($object, NULL);
   $xacml->datastreamRule->addDsid(array('ORCID'));
   $xacml->datastreamRule->addUser(array($user->name));
   $xacml->writeBackToFedora();
