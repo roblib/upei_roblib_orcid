@@ -42,7 +42,8 @@ function upei_roblib_orcid_response_access() {
   /*
   Currently UPEI does not want scholars to be able to edit their Scholar
   profile, but does want them to be able to add an ORCID iD to their MADS.
-  So for now let them use this module to add their ORCID iD without a permission check.
+  So for now let them use this module to add their ORCID iD without a
+  permission check.
   */
 
   /*
@@ -159,7 +160,6 @@ function upei_roblib_orcid_block_view($delta = '') {
   $block = array();
   switch ($delta) {
     case UPEI_ROBLIB_ORCID_BLOCK:
-      // Create your block content here.
       $block['subject'] = t('Islandora Orcid Integration');
       $user_pid = upei_roblib_orcid_get_user_entity();
       $form = drupal_get_form('upei_roblib_orcid_create_or_connect_form', $user_pid);
@@ -169,6 +169,20 @@ function upei_roblib_orcid_block_view($delta = '') {
   return $block;
 }
 
+/**
+ * Implements hook_init().
+ */
+function upei_roblib_orcid_init() {
+  drupal_add_js(array(
+    'upei_roblib_orcid' => array(
+      'orcid_logout_url' =>
+      variable_get('upei_roblib_orcid_logut_url',
+        'https://orcid.org/userStatus.json?logUserOut=true'),
+    ),
+  ), 'setting');
+  drupal_add_js(drupal_get_path(
+      'module', 'upei_roblib_orcid') . '/js/upei_roblib_orcid.js');
+}
 
 /**
  * Searches for an Islandora Person Entity object matching the Drupal username.

@@ -67,6 +67,13 @@ function upei_roblib_orcid_admin_form($form, &$form_state) {
     '#description' => t('Text to display above the ORCID connect or create button.'),
   );
 
+  $form['upei_roblib_orcid_logut_url'] = array(
+    '#title' => t('The ORCID logut URL.'),
+    '#type' => 'textfield',
+    '#default_value' => variable_get('upei_roblib_orcid_logut_url', 'https://orcid.org/userStatus.json?logUserOut=true'),
+    '#description' => t('The URL to use when logging a user out of ORCID. Usually "https://orcid.org/userStatus.json?logUserOut=true".'),
+  );
+
   $form['#validate'][] = 'upei_roblib_orcid_admin_form_validate';
   return system_settings_form($form);
 }

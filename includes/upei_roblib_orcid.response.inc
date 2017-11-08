@@ -64,11 +64,12 @@ function upei_roblib_orcid_handle_orcid_error($error, $error_description) {
  *   A PHP object containing the data (body) of the response.
  */
 function upei_roblib_orcid_successful_token_request($response) {
+  module_load_include('inc', 'upei_roblib_orcid', 'includes/upei_roblib_orcid.object');
   $data = json_decode($response->data, TRUE);
   global $user;
   $pid = upei_roblib_orcid_get_user_entity();
   try {
-    upei_roblib_orcid_add_id_mads($data['orcid'], $pid);
+    upei_roblib_orcid_update_object($data, $pid);
   }
   catch (Exception $e) {
     watchdog('UPEI Roblib Orcid',
@@ -135,69 +136,4 @@ function upei_roblib_orcid_get_orcid_id($code) {
   );
   $options = array('headers' => $headers, 'data' => $data, 'method' => 'POST');
   return drupal_http_request($path, $options);
-}
-
-/**
- * Updates Islandora Person object MADS with an ORCID iD.
- *
- * @param string $orcid_id
- *   The ORCID iD
- * @param string $pid
- *   The PID of the islandora object to update.
- *
- * @throws \Exception
- *   IF the Object does not exist, the MADS can't be found or an ORCID iD exists
- */
-function upei_roblib_orcid_add_id_mads($orcid_id, $pid) {
-  if (empty($pid)) {
-    throw new Exception('Person Entity Object not found');
-  }
-  $profile_object = islandora_object_load($pid);
-  if (empty($profile_object)) {
-    throw new Exception('Could not load Person Entity Object');
-  }
-  $mads = $profile_object['MADS']->content;
-  if (empty($mads)) {
-    throw new Exception('MADS datastream not found');
-  }
-  $updated_xml = upei_roblib_orcid_update_mads($mads, $orcid_id);
-
-  $profile_object['MADS']->setContentFromString($updated_xml);
-}
-
-/**
- * Adds an ORCID iD to the MADS xml.
- *
- * @param string $mads_xml
- *   The MADS xml.
- * @param string $orcid_id
- *   An ORCID iD.
- *
- * @return string
- *   The updated MADS xml.
- * @throws \Exception
- *   If the MADS cannot be loaded as xml or the MADS already has an ORCID iD.
- */
-function upei_roblib_orcid_update_mads($mads_xml, $orcid_id) {
-  $xml = new DOMDocument();
-  $test = $xml->loadXML($mads_xml);
-  if (empty($test)) {
-    throw new Exception("Error parsing MADS xml");
-  }
-  $query = "//mads:identifier[@type='orcid']";
-  $xpath = new DOMXPath($xml);
-  $xpath->registerNamespace('mads', 'http://www.loc.gov/mads/v2');
-  $results = $xpath->query($query, $xml);
-  $found = (bool) $results->length;
-  if (!empty($found)) {
-    throw new Exception('ORCID ID Exists');
-  }
-  $root = $xml->documentElement;
-  $identifier = $xml->createElementNS("http://www.loc.gov/mads/v2",
-    "mads:identifier", $orcid_id);
-  $attr = $xml->createAttribute('type');
-  $attr->value = 'orcid';
-  $identifier->appendChild($attr);
-  $root->appendChild($identifier);
-  return $xml->saveXML();
 }
