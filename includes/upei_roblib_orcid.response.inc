@@ -47,13 +47,13 @@ function upei_roblib_orcid_response() {
  */
 function upei_roblib_orcid_handle_orcid_error($error, $error_description) {
   global $user;
-  drupal_set_message(t('Sorry, the connection was not successful. There was an Error linking your profile with an ORCID ID.  
+  drupal_set_message(t('Sorry, the connection was not successful. There was an Error linking your profile with an ORCID ID.
     @error. @error_description.  Try again?',
     array(
       '@username' => $user->name,
       '@error' => $error,
       '@error_description' => $error_description,
-    )), 'error');
+    )), 'info');
   drupal_goto('user/' . $user->uid);
 }
 
@@ -86,7 +86,7 @@ function upei_roblib_orcid_successful_token_request($response) {
         '@msg' => $e->getMessage(),
         '@username' => $user->name,
         '@pid' => $pid,
-      )), 'error');
+      )), 'info');
     drupal_goto('user/' . $user->id);
   }
   drupal_set_message(t('Thank you! Your ORCID iD (@orcid_id) is now linked to your profile (@pid).',
@@ -104,7 +104,7 @@ function upei_roblib_orcid_failed_token_request($response) {
   global $user;
   $data = json_decode($response->data, TRUE);
   drupal_set_message(t('Sorry, the connection was not successful.  Error linking your Scholar profile with your ORCID ID, @error.',
-    array('@error' => $data['status_message'])), 'error');
+    array('@error' => $data['status_message'])), 'info');
   drupal_goto('user/' . $user->uid);
 }
 
