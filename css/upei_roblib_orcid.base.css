@@ -1,6 +1,10 @@
-.upei-roblib-orcid-connect-button{
+#edit-connect-button {
+  background-image: url(https://orcid.org/sites/default/files/images/orcid_24x24.png);
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
   border: 1px solid #D3D3D3;
   padding: .3em;
+  padding-left: 30px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 1px 1px 3px #999;
@@ -12,10 +16,11 @@
   vertical-align: middle;
 }
 
-.upei-roblib-orcid-connect-button:hover{
+#edit-connect-button:hover{
   border: 1px solid #338caf;
   color: #338caf;
 }
+
 
 .orcid-id-logo{
   display: block;
