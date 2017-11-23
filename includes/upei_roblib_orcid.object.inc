@@ -113,3 +113,43 @@ function upei_roblib_orcid_update_mads($mads_xml, $orcid_id) {
   $root->appendChild($identifier);
   return $xml->saveXML();
 }
+
+/**
+ * Get the scholar details from the Scholar's profile.
+ *
+ * @return array
+ *   Returns the email, given name, and family name.
+ * @throws \Exception
+ *   If the Scholars object can't be loaded or the MADS datastream can't be
+ * parsed.
+ */
+function upei_roblib_orcid_get_scholars_details() {
+  $pid = upei_roblib_orcid_get_user_entity();
+  if (empty($pid)) {
+    throw new Exception('Person Entity Object not found');
+  }
+  $profile_object = islandora_object_load($pid);
+  if (empty($profile_object)) {
+    throw new Exception('Could not load Person Entity Object');
+  }
+  $mads = $profile_object['MADS']->content;
+  if (empty($mads)) {
+    throw new Exception('MADS datastream not found');
+  }
+  $xml = new DOMDocument();
+  $test = $xml->loadXML($mads);
+  if (empty($test)) {
+    throw new Exception("Error parsing MADS xml");
+  }
+  $email = $xml->getElementsByTagName('email')->item(0)->nodeValue;
+  $xpath = new DOMXPath($xml);
+  $xpath->registerNamespace('mads', 'http://www.loc.gov/mads/v2');
+  $given_names = $xpath->query("//mads:namePart[@type='given']", $xml)->item(0)->nodeValue;
+  $family_names = $xpath->query("//mads:namePart[@type='family']", $xml)->item(0)->nodeValue;
+  $arr = array(
+    'email' => $email,
+    'given_names' => $given_names,
+    'family_names' => $family_names,
+  );
+  return $arr;
+}

@@ -127,15 +127,20 @@ function upei_roblib_orcid_needs_orcid_id($mads_xml) {
  *   The Drupal form state.
  */
 function upei_roblib_orcid_create_or_connect_form_submit($form, &$form_state) {
+  module_load_include('inc', 'upei_roblib_orcid', 'includes/upei_roblib_orcid.object');
   $path = variable_get('upei_roblib_orcid_oauth_auth_endpoint');
   $client_id = variable_get('upei_roblib_orcid_oauth_client_id');
   $redirect_url = url(NULL, array('absolute' => TRUE)) . UPEI_ROBLIB_ORCID_CALLBACK_URI . '/';
+  $scholar_details = upei_roblib_orcid_get_scholars_details();
   $options = array(
     'query' => array(
       'client_id' => $client_id,
       'response_type' => 'code',
       'scope' => '/authenticate',
       'redirect_uri' => $redirect_url,
+      'email' => empty($scholar_details['email']) ? '' : $scholar_details['email'],
+      'given_names' => empty($scholar_details['given_names']) ? '' : $scholar_details['given_names'],
+      'family_names' => empty($scholar_details['family_names']) ? '' : $scholar_details['family_names'],
     ),
     'absolute' => TRUE,
   );
@@ -194,6 +199,10 @@ function upei_roblib_orcid_get_user_entity() {
   $qualifier = variable_get('upei_roblib_orcid_mads_user_field', 'MADS_u1_ms');
   global $user;
   module_load_include('inc', 'islandora_solr', 'includes/utilities');
+  if (empty($user->name)) {
+    watchdog('UPEI Roblib Orcid', 'Error searching for user id, user name does not exist.', array(), WATCHDOG_ERROR);
+    return NULL;
+  }
   $user_name = islandora_solr_lesser_escape($user->name);
   $params = array(
     'fl' => array('PID'),
@@ -205,7 +214,7 @@ function upei_roblib_orcid_get_user_entity() {
     $results = $qp->islandoraSolrResult['response']['objects'];
   }
   catch (Exception $e) {
-    watchdog_exception('UPEI Roblib Orcid', $e, 'Got an exception while searching for user.', array(), WATCHDOG_ERROR);
+    watchdog_exception('UPEI Roblib Orcid', $e, 'Error searching for user id.', array(), WATCHDOG_ERROR);
   }
   $pid = NULL;
   if (isset($results)) {
