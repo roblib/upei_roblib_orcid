@@ -47,8 +47,10 @@ function upei_roblib_orcid_response() {
  */
 function upei_roblib_orcid_handle_orcid_error($error, $error_description) {
   global $user;
-  drupal_set_message(t('Sorry, the connection was not successful. There was an Error linking your profile with an ORCID ID.
-    @error. @error_description.  Try again?',
+  drupal_set_message(t('Sorry, the connection was not successful. There was an error linking your profile with an ORCID ID. 
+  Linking ORCID allows IslandScholar to display your ORCID iD on your Scholar profile.  To link your ORCID iD with your Scholar 
+  profile IslandScholar needs permission to access your ORCID iD.  For ORCID to give IslandScholar permission to access your ORCID iD
+   you will need to click the Authorize button on the ORCID site. @error. @error_description.  Try again?',
     array(
       '@username' => $user->name,
       '@error' => $error,

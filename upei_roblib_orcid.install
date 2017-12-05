@@ -8,7 +8,7 @@
 /**
  * Implements hook_uninstall().
  */
-function islandora_newspaper_uninstall() {
+function upei_roblib_orcid_uninstall() {
   $variables = array(
     'upei_roblib_orcid_oauth_token_endpoint',
     'upei_roblib_orcid_oauth_auth_endpoint',
